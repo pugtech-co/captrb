@@ -1,13 +1,13 @@
 # your_app.gemspec
 Gem::Specification.new do |s|
   s.name        = 'captrb'
-  s.version     = '0.1.1'
+  s.version     = '0.1.2'
   s.summary     = 'captain\'s log'
   s.description = 'A longer description of your app'
   s.authors     = ['pugtech']
   s.email       = ['support@pugtech.co']
   s.homepage    = 'https://pugtech.co'
-  s.license     = nil
+  s.license     = 'Nonstandard'
 
   s.files       = Dir['lib/**/*', 'bin/*']
 
