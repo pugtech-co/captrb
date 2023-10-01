@@ -3,7 +3,7 @@ require 'fileutils'
 
 module Captrb
   class Config
-    CONFIG_PATH = File.expand_path("~/.your_app/config.yaml")
+    CONFIG_PATH = File.expand_path("~/.captrb/config.yaml")
 
     def self.load_or_create
       unless File.exist?(CONFIG_PATH)
