@@ -20,6 +20,8 @@ module Captrb
         o.string '-c', '--config', 'Specify the configuration file to use.', default: "~/.captrb/config.yaml"
         o.string '-d', '--database', 'Specify the database to use.  Remembers this selection'
         o.string '-k', '--key', 'Specify the OpenAI API key to use.  Remembers this selection'
+        o.bool '-b', '--burn-down', 'Burn down todo items.'
+        o.string '-l', '--list', 'List all categorized todo items.'
         o.on '-h', '--help', 'Display this help message.' do
           puts o
           exit
@@ -37,7 +39,7 @@ module Captrb
         puts "Config file not found: #{config_file_path}"
         # get key from user, set database to ~/.captrb/captrb.db
         print "Enter your OpenAI API key: "
-        api_key = gets.chomp
+        api_key = STDIN.gets.chomp
         return { database: "~/.captrb/captrb.db", key: api_key }
       end
     end

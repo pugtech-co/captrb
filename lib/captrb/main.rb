@@ -2,39 +2,43 @@ require_relative 'config'
 require_relative 'database'
 require_relative 'api'
 
+
 module Captrb
   class Main
     def self.run
+      all_categories = ['work', 'personal', 'finance', 'health', 'shopping', 'goodreads']
 
       config = Config.new
       api_key = config.settings.api_key
 
       db = Database.new
 
+      note_text, categories = get_note api_key, all_categories
+      save_note db, note_text, categories
+      display_cats(db)
+    end
+
+    def self.get_note(api_key, categories)
       print "Please enter a note: "
-      note_text = gets.chomp
-      note_id = db.add_note(note_text)
-      categories = ['work', 'personal', 'finance', 'health', 'shopping', 'goodreads']
+      note_text = STDIN.gets.chomp
 
-      # Initialize APIManager
       api_manager = APIManager.new(api_key)
-
-      # Get a completion from OpenAI
       completion = api_manager.get_completion(note_text, categories)
 
       if completion.is_a?(Array)
-        puts "API Suggested Categories: #{completion.join(', ')}"
+        ts "API Suggested Categories: #{completion.join(', ')}"
       elsif completion.is_a?(String)
-        puts "API Completion: #{completion}"
-        return
+        puts "API Completion Doesn't match expected pattern: #{completion}"
+        return note_text, []
       end
+      return note_text, completion
+    end
 
-      # Add categories to note
-      completion.each do |category|
+    def self.save_note(db, note_text, categories)
+      note_id = db.add_note(note_text)
+      categories.each do |category|
         db.add_category(note_id, category)
       end
-
-      display_cats(db)
     end
 
     def self.display_cats(db)
