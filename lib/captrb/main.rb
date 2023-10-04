@@ -5,6 +5,7 @@ require_relative 'api'
 module Captrb
   class Main
     def self.run
+
       config = Config.load_or_create
       api_key = config['api_key']
 
@@ -22,9 +23,9 @@ module Captrb
       completion = api_manager.get_completion(note_text, categories)
 
       if completion.is_a?(Array)
-        print "API Suggested Categories: #{completion.join(', ')}\n"
+        puts "API Suggested Categories: #{completion.join(', ')}"
       elsif completion.is_a?(String)
-        print "API Completion: #{completion}\n"
+        puts "API Completion: #{completion}"
         return
       end
 
@@ -42,12 +43,13 @@ module Captrb
         category, notes = group
         notes_array = notes.split(',')
         
-        print "Category: #{category}\n"
+        puts "Category: #{category}"
         notes_array.each_with_index do |note, index|
-          print "  #{index + 1}: #{note.strip}\n"
+          puts "  #{index + 1}: #{note.strip}"
         end
       end
     end
+
   end
 end
 

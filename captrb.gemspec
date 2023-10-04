@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.files       = Dir['lib/**/*', 'bin/*']
 
   s.add_dependency 'sqlite3', "~> 1.4"
+  s.add_dependency 'slop', "~> 4.10.1"
   s.executables = ['captrb']
 end
 

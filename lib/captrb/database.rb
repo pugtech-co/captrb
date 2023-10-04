@@ -14,7 +14,6 @@ module Captrb
         FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
         @db = SQLite3::Database.new(@db_path)
     end
-      
 
     def ensure_tables_exist
         @db.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, text TEXT);")
