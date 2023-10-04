@@ -6,8 +6,8 @@ module Captrb
   class Main
     def self.run
 
-      config = Config.load_or_create
-      api_key = config['api_key']
+      config = Config.new
+      api_key = config.settings.api_key
 
       db = Database.new
 

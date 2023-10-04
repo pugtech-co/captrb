@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    configurate (0.5.0)
     json (2.6.3)
     parallel (1.23.0)
     parser (3.2.2.3)
@@ -32,6 +33,7 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  configurate
   rubocop
   slop
   sqlite3

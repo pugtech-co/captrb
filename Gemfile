@@ -5,3 +5,4 @@ gem 'sqlite3'
 
 gem 'rubocop', require: false
 gem 'slop'
+gem 'configurate'
