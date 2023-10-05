@@ -1,7 +1,44 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/captrb/main'
+require_relative '../lib/captrb/app'
 
 # Entry point of your application
-Captrb::Main.new.run
+Captrb::App.start(ARGV)
 
+# require 'thor'
+
+# module Captrb
+#   class App < Thor
+#     class_option :verbose, :type => :boolean, :aliases => "-v"     
+
+#     def self.exit_on_failure?
+#       true
+#     end
+  
+#     def initialize(*args)
+#       super 
+#       puts "Initializing..."
+#       puts "Verbose mode enabled" if options[:verbose]
+#     end
+    
+#     map "-L" => :list, "" => :install
+#     default_command :install
+
+#     desc "install APP_NAME", "install one of the available apps"
+#     method_options :force => :boolean, :alias => :string
+#     def install(name)
+#       user_alias = options[:alias]
+#       if options.force?
+#         puts "Force option used"
+#       end
+#       puts "installing #{name}..."
+#     end
+    
+#     desc "list [SEARCH]", "list all of the available apps, limited by SEARCH"
+#     def list(search="")
+#       puts "listing #{search}..."
+#     end
+#   end
+# end
+
+# Captrb::App.start(ARGV)

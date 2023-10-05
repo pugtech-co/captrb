@@ -3,8 +3,8 @@ require 'fileutils'
 
 module Captrb
   class Database
-    def initialize
-      @db_path = File.expand_path("~/.captrb/captrb.db")
+    def initialize(options)
+      @db_path = File.expand_path(options[:database])
       connect
       ensure_tables_exist
     end
@@ -49,6 +49,10 @@ module Captrb
 
     def get_all_notes
       @db.execute("SELECT * FROM notes")
+    end
+
+    def get_notes(category)
+      @db.execute("SELECT * FROM notes WHERE id IN (SELECT note_id FROM categories WHERE category = ?)", category)
     end
 
     def get_first_note_and_categories

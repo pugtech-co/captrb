@@ -1,33 +1,22 @@
 require 'fileutils'
-require 'slop'
 require 'yaml'
 
 module Captrb
+  # Config class is responsible for loading and saving the config file.
+  # Thor passes in the options hash, which is used to load the config file.
+  # This then puts the options and configs into an OpenStruct object. 
+
   class Config
     attr_reader :settings
 
-    def initialize
-      opts = parse_args
-      config = load_config_file(opts[:config])
-      opts[:database] = config[:database] unless opts[:database]
-      opts[:key] = config[:key] unless opts[:key]
-      save_config_file(opts[:config] ,opts[:database], opts[:key])
-      @settings = OpenStruct.new(opts)
+    def initialize(options)
+      config = load_config_file(options[:config])
+      config[:database] = config[:database] unless options[:database]
+      config[:key] = config[:key] unless options[:key]
+      save_config_file(options[:config] ,config[:database], config[:key])
+      @settings = OpenStruct.new(config)
     end
 
-    def parse_args
-      Slop.parse do |o|
-        o.string '-c', '--config', 'Specify the configuration file to use.', default: "~/.captrb/config.yaml"
-        o.string '-d', '--database', 'Specify the database to use.  Remembers this selection'
-        o.string '-k', '--key', 'Specify the OpenAI API key to use.  Remembers this selection'
-        o.bool '-b', '--burn-down', 'Burn down todo items.'
-        o.bool '-l', '--list', 'List all categorized todo items.'
-        o.on '-h', '--help', 'Display this help message.' do
-          puts o
-          exit
-        end
-      end.to_hash
-    end
 
     def load_config_file(config_file_path)
       config_file_path = File.expand_path(config_file_path)
