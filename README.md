@@ -12,3 +12,5 @@ main
 
 4. clean up input
 - should I use highline?
+- or ncurses/ruby curses?
+- or just use readline?

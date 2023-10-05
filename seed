@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require_relative './lib/captrb/app'
+
+possible_categories = ['work', 'personal', 'finance', 'health', 'shopping', 'goodreads']
+# list of sample todo list notes with categories
+notes = ["Take some time off to hike the ARI trail",
+          "buy groceries",
+          "change the oil in the car",
+          "Make another batch of kombucha",
+          "Buy a new pair of running shoes",
+          "buy some microgreen trays",
+          "check on the buttermilk fermentation",
+          "read deep learning by goodfellow",
+          "investigate types of moonshine stills"]
+
+app = Captrb::App.new
+app.send(:clear_database)
+for note in notes do
+  app.send(:save_note, note, possible_categories.sample(3))
+end
+
