@@ -21,7 +21,7 @@ module Captrb
         o.string '-d', '--database', 'Specify the database to use.  Remembers this selection'
         o.string '-k', '--key', 'Specify the OpenAI API key to use.  Remembers this selection'
         o.bool '-b', '--burn-down', 'Burn down todo items.'
-        o.string '-l', '--list', 'List all categorized todo items.'
+        o.bool '-l', '--list', 'List all categorized todo items.'
         o.on '-h', '--help', 'Display this help message.' do
           puts o
           exit

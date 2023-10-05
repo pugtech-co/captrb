@@ -3,5 +3,5 @@
 require_relative '../lib/captrb/main'
 
 # Entry point of your application
-Captrb::Main.run
+Captrb::Main.new.run
 

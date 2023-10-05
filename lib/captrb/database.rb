@@ -50,5 +50,11 @@ module Captrb
     def get_all_notes
       @db.execute("SELECT * FROM notes")
     end
+
+    def get_first_note_and_categories
+      note = @db.execute("SELECT * FROM notes LIMIT 1")
+      categories = @db.execute("SELECT * FROM categories WHERE note_id = ?", note[0][0])
+      return note, categories
+    end
   end
 end

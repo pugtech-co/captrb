@@ -27,6 +27,7 @@ GEM
     ruby-progressbar (1.13.0)
     slop (4.10.1)
     sqlite3 (1.6.6-arm64-darwin)
+    thor (1.2.2)
     unicode-display_width (2.4.2)
 
 PLATFORMS
@@ -37,6 +38,7 @@ DEPENDENCIES
   rubocop
   slop
   sqlite3
+  thor (~> 1.2, >= 1.2.2)
 
 BUNDLED WITH
    2.4.20
