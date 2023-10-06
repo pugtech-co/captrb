@@ -7,7 +7,8 @@
 require 'thor'
 require_relative 'config'
 require_relative 'database'
-require_relative 'api'
+require_relative 'api/completions_client'
+require_relative 'api/embeddings_client'
 
 module Captrb
   class App < Thor
@@ -26,6 +27,8 @@ module Captrb
       @all_categories = ['work', 'personal', 'finance', 'health', 'shopping', 'goodreads']
       @config = Config.new(options)
       @db = Database.new(@config.settings)
+      @completions_api = CompletionsClient.new(@config.settings.key)
+      @embeddings_api = EmbeddingsClient.new(@config.settings.key)
     end
 
     desc "burn_down", "Burn down todo items."
@@ -44,8 +47,18 @@ module Captrb
 
     desc "add", "Add a new todo item."
     def add
-      note_text, categories = get_note
-      save_note note_text, categories
+      note_text, categories, embedding = get_note
+      save_note note_text, categories, embedding
+    end
+
+    desc "embeds", "list notes that have embeddings"
+    def embeds
+      notes = @db.get_all_notes
+      notes.each do |note|
+        e = @db.get_embedding(note[0])
+        puts note[1] if e
+        p e[0] if e
+      end
     end
 
     private
@@ -54,8 +67,9 @@ module Captrb
       print "Please enter a note: "
       note_text = STDIN.gets.chomp
 
-      api_manager = APIManager.new(@config.settings.key)
-      completion = api_manager.get_completion(note_text, @all_categories)
+      completion = @completions_api.get_completion(note_text, @all_categories)
+      embedding = @embeddings_api.get_embedding(note_text)
+      p embedding
 
       if completion.is_a?(Array)
         puts "API Suggested Categories: #{completion.join(', ')}"
@@ -63,14 +77,15 @@ module Captrb
         puts "API Completion Doesn't match expected pattern: #{completion}"
         return note_text, []
       end
-      return note_text, completion
+      return note_text, completion, embedding
     end
 
-    def save_note(note_text, categories)
+    def save_note(note_text, categories, embedding)
       note_id = @db.add_note(note_text)
       categories.each do |category|
         @db.add_category(note_id, category)
       end
+      @db.add_embedding(note_id, embedding)
     end
 
     def display_cats

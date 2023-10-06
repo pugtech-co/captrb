@@ -27,7 +27,17 @@ module Captrb
     end
 
     def add_embedding(note_id, vector)
-        @db.execute("INSERT INTO embeddings (note_id, vector) VALUES (?, ?)", note_id, vector.to_s)
+      binary_vector = vector.pack("g*")
+      @db.execute("INSERT INTO embeddings (note_id, vector) VALUES (?, ?)", note_id, SQLite3::Blob.new(binary_vector))
+    end
+
+    def get_embedding(note_id)
+      row = @db.get_first_row("SELECT vector FROM embeddings WHERE note_id = ?", note_id)
+      if row 
+        binary_vector = row[0] 
+        array = binary_vector.unpack('g*')
+        return array
+      end
     end
 
     def add_category(note_id, category)
