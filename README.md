@@ -20,3 +20,4 @@ main
 - make database creation into rake tasks and migrations
 - add active record to replace database.rb
 - make MVC with ncurse views
+- dependency injection

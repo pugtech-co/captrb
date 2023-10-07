@@ -1,12 +1,7 @@
-# 
-# o.string '-c', '--config', 'Specify the configuration file to use.', default: "~/.captrb/config.yaml"
-# o.string '-d', '--database', 'Specify the database to use.  Remembers this selection'
-# o.string '-k', '--key', 'Specify the OpenAI API key to use.  Remembers this selection'
-# o.bool '-b', '--burn-down', 'Burn down todo items.'
-# o.bool '-l', '--list', 'List all categorized todo items.'
 require 'thor'
 require_relative 'config'
 require_relative 'database'
+require_relative 'calc'
 require_relative 'api/completions_client'
 require_relative 'api/embeddings_client'
 
@@ -29,6 +24,7 @@ module Captrb
       @db = Database.new(@config.settings)
       @completions_api = CompletionsClient.new(@config.settings.key)
       @embeddings_api = EmbeddingsClient.new(@config.settings.key)
+      @math = Calc.new
     end
 
     desc "burn_down", "Burn down todo items."
@@ -51,13 +47,27 @@ module Captrb
       save_note note_text, categories, embedding
     end
 
-    desc "embeds", "list notes that have embeddings"
-    def embeds
+    desc "query", "list the top notes related to a query"
+    def query(query_string)
+      notes = @db.get_all_notes
+      query_embedding = @embeddings_api.get_embedding(query_string)
+
+      # Collect embeddings and their corresponding note IDs
+      note_embeddings = {}
       notes = @db.get_all_notes
       notes.each do |note|
-        e = @db.get_embedding(note[0])
-        puts note[1] if e
-        p e[0] if e
+        note_id = note[0]
+        embedding = @db.get_embedding(note_id)
+        note_embeddings[note_id] = embedding if embedding
+      end
+    
+      # Get top_n related notes
+      top_note_ids, top_scores = @math.strings_ranked_by_relatedness(query_embedding, note_embeddings)
+    
+      # Print or otherwise use the top related notes
+      top_note_ids.each_with_index do |note_id, index|
+        note_text = notes.find { |note| note[0] == note_id }[1]
+        puts "#{index + 1}: #{note_text} (score: #{top_scores[index]})"
       end
     end
 
@@ -69,7 +79,6 @@ module Captrb
 
       completion = @completions_api.get_completion(note_text, @all_categories)
       embedding = @embeddings_api.get_embedding(note_text)
-      p embedding
 
       if completion.is_a?(Array)
         puts "API Suggested Categories: #{completion.join(', ')}"
