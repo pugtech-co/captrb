@@ -61,6 +61,10 @@ module Captrb
       @db.execute("SELECT * FROM notes")
     end
 
+    def get_all_notes_text
+      @db.execute("SELECT text FROM notes")
+    end
+
     def get_notes(category)
       @db.execute("SELECT * FROM notes WHERE id IN (SELECT note_id FROM categories WHERE category = ?)", category)
     end

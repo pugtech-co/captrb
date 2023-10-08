@@ -1,6 +1,6 @@
 module Captrb
   class BaseView
-    # attr_reader :window
+    attr_reader :window
 
     def initialize(lines, cols, y, x)
       @window = Curses::Window.new(lines, cols, y, x)
