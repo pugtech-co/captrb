@@ -9,7 +9,7 @@ module Captrb
       Curses.start_color
       Curses.init_pair(1, Curses::COLOR_BLACK, Curses::COLOR_GREEN)
       Curses.init_pair(2, Curses::COLOR_GREEN, Curses::COLOR_BLACK)
-
+      Curses.init_pair(3, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
 
       controller = Captrb::Router.start(args)
 
@@ -20,6 +20,7 @@ module Captrb
         Curses.close_screen
         puts e.message
         puts e.backtrace
+        return
       end
 
 

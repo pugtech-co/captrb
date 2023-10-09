@@ -7,8 +7,10 @@ require_relative 'api/embeddings_client'
 
 require_relative 'controllers/add_controller'
 require_relative 'controllers/query_controller'
+require_relative 'controllers/burn_down_controller'
 
 module Captrb
+  # TODO figure out how to throw help as an error, so it escapes from thor
   class Router < Thor
     default_command :add
     class_option :config, type: :string, default: "~/.captrb/config.yaml", desc: 'Specify the configuration file to use', aliases: '-c'
@@ -32,11 +34,12 @@ module Captrb
 
     desc "burn_down", "Burn down todo items."
     def burn_down(category=nil)
-      if category
-        burn_down_category(category)
-      else
-        burn_down_all
-      end
+      BurnDownController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc)
+      # if category
+        # burn_down_category(category)
+      # else
+        # burn_down_all
+      # end
     end
 
     desc "list", "List all categorized todo items."

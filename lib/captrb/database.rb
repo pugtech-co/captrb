@@ -69,6 +69,14 @@ module Captrb
       @db.execute("SELECT * FROM notes WHERE id IN (SELECT note_id FROM categories WHERE category = ?)", category)
     end
 
+    def get_note_by_id(note_id)
+      @db.execute("SELECT * FROM notes WHERE id = ?", note_id)
+    end
+
+    def get_categories_by_note_id(note_id)
+      @db.execute("SELECT category FROM categories WHERE note_id = ?", note_id)
+    end
+
     def delete_note_and_categories(note_id)
       @db.execute("DELETE FROM notes WHERE id = ?", note_id)
       @db.execute("DELETE FROM categories WHERE note_id = ?", note_id)
