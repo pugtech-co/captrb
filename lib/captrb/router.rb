@@ -8,6 +8,8 @@ require_relative 'api/embeddings_client'
 require_relative 'controllers/add_controller'
 require_relative 'controllers/query_controller'
 require_relative 'controllers/burn_down_controller'
+require_relative 'controllers/categorical_burn_down_controller'
+require_relative 'controllers/semantic_burn_down_controller'
 
 module Captrb
   # TODO figure out how to throw help as an error, so it escapes from thor
@@ -34,12 +36,11 @@ module Captrb
 
     desc "burn_down", "Burn down todo items."
     def burn_down(category=nil)
-      BurnDownController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc)
-      # if category
-        # burn_down_category(category)
-      # else
-        # burn_down_all
-      # end
+      if category
+        CategoricalBurnDownController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc, category)
+      else
+        BurnDownController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc)
+      end
     end
 
     desc "list", "List all categorized todo items."
@@ -56,7 +57,8 @@ module Captrb
 
     desc "query", "list the top notes related to a query"
     def query(query_string)
-      QueryController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc, query_string)
+      # QueryController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc, query_string)
+      SemanticBurnDownController.new(@db, @completions_api, @embeddings_api, @all_categories, @calc, query_string)
     end
 
     private
@@ -72,40 +74,6 @@ module Captrb
           puts "  #{index + 1}: #{note.strip}"
         end
       end
-    end
-
-    def burn_down_category(category)
-      puts "Burning down todo list for category: #{category}"
-      puts "_____________________________________________"
-
-      i = 0
-      notes = @db.get_notes(category)
-
-      while true
-        break if i >= notes.length
-        puts "\nTODO: \033[1m#{notes[i][1]}\033[0m"
-        print "Complete (c) or Skip (s) or Quit (q) or Remove Category (r): "
-        choice = STDIN.gets.chomp
-        if choice == 'c'
-          puts "Completing"
-          @db.delete_note_and_categories(notes[i][0])
-          notes = @db.get_notes(category)
-          i = 0
-        elsif choice == 's'
-          puts "Skipping"
-          i += 1
-        elsif choice == 'r'
-          puts "Removing this note from category: #{category}"
-          @db.delete_category_for_note_and_category(notes[i][0], category)
-          notes = @db.get_notes(category)
-        elsif choice == 'q'
-          puts "Quitting"
-          break
-        else
-          puts "Invalid choice"
-        end
-      end
-      puts "Category complete"
     end
 
     def burn_down_all

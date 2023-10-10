@@ -89,6 +89,14 @@ module Captrb
         note << categories
       end
     end
+    
+    def get_notes_with_categories_by_category(category)
+      notes = @db.execute("SELECT * FROM notes WHERE id IN (SELECT note_id FROM categories WHERE category = ?)", category)
+      notes.map do |note|
+        categories = @db.execute("SELECT category FROM categories WHERE note_id = ?", note[0])
+        note << categories
+      end
+    end
 
     def delete_category_for_note_and_category(note_id, category)
       @db.execute("DELETE FROM categories WHERE note_id = ? AND category = ?", note_id, category)
